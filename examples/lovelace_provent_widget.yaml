@@ -1,0 +1,93 @@
+# ProVent RC7 Premium - "Quick Control" widget (built-in Lovelace cards)
+#
+# How to use:
+# 1) Dashboard -> Edit -> Add card -> Manual
+# 2) Paste this whole YAML block
+# 3) Replace the entity IDs with your own entity IDs
+#
+# Tip: use one vertical-stack card so it looks like a single widget.
+type: vertical-stack
+cards:
+  - type: markdown
+    content: >
+      ## ProVent Quick Control
+      Fast access to fan, airflow mode, season, bypass/GWC and key toggles.
+
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: tile
+        entity: fan.provent_rc7_premium_fan
+        name: Fan
+        features:
+          - type: fan-speed
+          - type: fan-preset-modes
+      - type: tile
+        entity: switch.provent_rc7_premium_ventilation_boost
+        name: Boost
+
+  - type: grid
+    columns: 3
+    square: false
+    cards:
+      - type: tile
+        entity: switch.provent_rc7_premium_humidity_control
+        name: Humidity
+      - type: tile
+        entity: switch.provent_rc7_premium_co2_control
+        name: CO2
+      - type: tile
+        entity: switch.provent_rc7_premium_anti_smog_shield
+        name: Anti-smog
+
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: tile
+        entity: select.provent_rc7_premium_airflow_mode
+        name: Airflow
+      - type: tile
+        entity: select.provent_rc7_premium_ventilation_mode
+        name: Ventilation mode
+
+  - type: grid
+    columns: 3
+    square: false
+    cards:
+      - type: tile
+        entity: select.provent_rc7_premium_season_override
+        name: Season
+      - type: tile
+        entity: select.provent_rc7_premium_bypass_mode
+        name: Bypass
+      - type: tile
+        entity: select.provent_rc7_premium_gwc_mode
+        name: GWC
+
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: tile
+        entity: number.provent_rc7_premium_heating_setpoint
+        name: Heating setpoint
+      - type: tile
+        entity: number.provent_rc7_premium_cooling_setpoint
+        name: Cooling setpoint
+
+  - type: entities
+    title: Live status
+    show_header_toggle: false
+    entities:
+      - entity: sensor.provent_rc7_premium_fan_speed
+        name: Fan speed (reported)
+      - entity: sensor.provent_rc7_premium_ventilation_remaining
+        name: Boost remaining
+      - entity: sensor.provent_rc7_premium_current_season
+        name: Active season
+      - entity: sensor.provent_rc7_premium_heating_temperature
+        name: Heating temp
+      - entity: sensor.provent_rc7_premium_cooling_temperature
+        name: Cooling temp

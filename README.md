@@ -71,6 +71,19 @@ The integration also exposes writable entities (when the related feature exists 
 - **Numbers**: fan speed setpoint (`0..4`), heating setpoint (`4..35°C`), cooling setpoint (`4..35°C`).
 - **Switches**: ventilation boost, humidity control, CO2 control, anti-smog shield (when available in `elf` payload).
 
+## Fancy "Quick Control" widget
+A ready Lovelace widget is included at:
+- `examples/lovelace_provent_widget.yaml`
+
+It gives one compact control block with:
+- fan on/off + speed + preset mode
+- boost/humidity/CO2/anti-smog toggles
+- airflow/season/bypass/GWC selectors
+- heating/cooling setpoint controls
+- key live status rows
+
+Import it as a **Manual card** and replace the example entity IDs with your own.
+
 ## Services
 ### `provent.send_command`
 - **Description**: Sends arbitrary `data=` commands to `/api/savedata.php`, identical to what the official app does for fan speed, bypass, season, boost, etc.
