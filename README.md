@@ -12,7 +12,7 @@ Custom Home Assistant integration that speaks the same WebManipulator API the mo
 ## Requirements
 - A ProVent RC7 premium (S6) or compatible WebManipulator-based device reachable on your LAN.
 - The `/api/getdata.php`/`/api/savedata.php` endpoints accessible without additional authentication.
-- Home Assistant 2023.12 or newer (for typing hints and coordinator helpers used in the integration).
+- Home Assistant 2023.12 or newer (tested on 2026.2.3, which includes the typing hints and coordinator helpers used by this integration).
 
 ## Installation
 ### Via HACS
@@ -20,10 +20,11 @@ Custom Home Assistant integration that speaks the same WebManipulator API the mo
 2. Paste `https://github.com/deltasystems-pl/ha-provent-rc7-premium` and set the category to **Integration**.
 3. Install the repository, then restart Home Assistant.
 4. After restart, add the integration via **Settings > Devices & Services > Add Integration > ProVent RC7 Premium**.
+   The 1.0.1 release ZIP already contains `custom_components/provent/` along with the documentation and assets, so HACS deploys the integration directly under your HA `custom_components` directory.
 
 ### Manual installation
-1. Copy the contents of this repository into `<config>/custom_components/provent/`.
-2. Ensure `manifest.json`, `ha-provent/*`, and `hacs.json` are present inside the `provent` folder.
+1. Copy the `custom_components/provent/` folder from this repository into `<config>/custom_components/provent/`.
+2. Verify the integration folder includes `manifest.json`, `services.yaml`, and the HA components; the HACS metadata file is optional when you install manually.
 3. Restart Home Assistant and add the integration via the UI as described above.
 
 ## Configuration

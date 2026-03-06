@@ -1,15 +1,15 @@
 # Building a HACS-Compatible Release
 
-1. **Update metadata**: confirm `manifest.json` and `hacs.json` reflect the latest version, filename, tags, and `icon` entries. `hacs.json` must include:
+1. **Update metadata**: confirm `custom_components/provent/manifest.json` and `hacs.json` reflect the latest version, filename, tags, and `icon` entries. `hacs.json` must include:
    * `content_in_root`: true
    * `zip_release`: true
    * `filename`: the exact ZIP asset name (`ha-provent-rc7-premium.zip`)
    * `icon`: `logo.png`
 2. **Refresh documentation or assets** (logo, README, services, etc.).
-3. **Generate the ZIP** from the repository root so the archive includes `manifest.json`, `hacs.json`, `README.md`, `logo.png`, and the entire `ha-provent/` folder at the top level:
+3. **Generate the ZIP** from the repository root so the archive includes `hacs.json`, `README.md`, `FUTURE.md`, `LICENSE`, `logo.png`, and the entire `custom_components/` directory at the top level:
    ```bash
    cd /opt/app/rc7premium/ha-provent-rc7-premium
-   zip -r ../ha-provent-rc7-premium.zip manifest.json hacs.json README.md logo.png ha-provent
+   zip -r ../ha-provent-rc7-premium.zip README.md RELEASE.md FUTURE.md LICENSE hacs.json logo.png custom_components
    ```
 4. **Create or update a GitHub release** (e.g., `v1.0.0`, `v1.0.1`):
    * Attach the generated `ha-provent-rc7-premium.zip` as the release asset.
