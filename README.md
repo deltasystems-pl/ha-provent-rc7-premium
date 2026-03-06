@@ -1,6 +1,8 @@
 # ProVent RC7 Premium Home Assistant Integration
 
-A custom Home Assistant integration that speaks the same WebManipulator API the official mobile app uses. It polls `GET /api/getdata.php` to read SQLite-buffered Modbus values (in JSON) and exposes them as HA sensors, and it can mirror every mobile-app command by calling `POST /api/savedata.php`.
+![ProVent logo](logo.png)
+
+Custom Home Assistant integration that speaks the same WebManipulator API the mobile app uses. It polls `GET /api/getdata.php` to read SQLite-buffered Modbus values (JSON) and exposes them as HA sensors, while mirroring every mobile-app command through `POST /api/savedata.php`.
 
 ## Architecture & Communication
 1. **Polling data**: The integration uses `Ha`'s `DataUpdateCoordinator` to POST `variable[]=all` to `/api/getdata.php`. The WebManipulator returns a JSON map (e.g. `"tmp"`, `"dat"`, `"spd"`, `"nag"`, `"chl"`, etc.) that already contains decoded values from the onboard SQLite buffer, which itself is maintained by the Modbus-RTU daemon.
