@@ -1,0 +1,13 @@
+{
+  "name": "ProVent RC7 Premium",
+  "content_in_root": true,
+  "render_readme": true,
+  "zip_release": true,
+  "country": "PL",
+  "homeassistant": "2023.12.0",
+  "iot_class": "local_polling",
+  "tags": ["rekuperacja", "provent", "rc7", "custom-integration"],
+  "domains": ["integration"],
+  "description": "Polls the ProVent WebManipulator and exposes its JSON buffer as Home Assistant sensors plus a raw command service.",
+  "version": "1.0.0"
+}
