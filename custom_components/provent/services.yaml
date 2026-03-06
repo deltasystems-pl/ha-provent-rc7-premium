@@ -7,3 +7,6 @@ send_command:
     entry_id:
       description: "Optional config entry `entry_id` to route the request to a specific ProVent device."
       example: "982f8d47abcd1234"
+    validate:
+      description: "Validate command syntax and allowed ranges for known command groups before sending (recommended)."
+      example: true

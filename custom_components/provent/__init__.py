@@ -5,7 +5,7 @@ import logging
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT
+from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import aiohttp_client
@@ -13,9 +13,11 @@ from homeassistant.helpers.service import async_register_admin_service
 
 from .api import ProventApiClient
 from .coordinator import ProventDataUpdateCoordinator
+from .commands import validate_commands
 from .const import (
     ATTR_COMMAND,
     ATTR_ENTRY_ID,
+    ATTR_VALIDATE,
     CONF_API_PATH,
     CONF_USE_SSL,
     DATA_COORDINATOR,
@@ -30,6 +32,7 @@ SERVICE_SEND_COMMAND_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_COMMAND): str,
         vol.Optional(ATTR_ENTRY_ID): str,
+        vol.Optional(ATTR_VALIDATE, default=True): bool,
     }
 )
 
@@ -39,7 +42,10 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
     async def async_handle_send_command(service_call) -> None:
         client = _get_client_for_service(hass, service_call.data.get(ATTR_ENTRY_ID))
-        await client.async_send_command(service_call.data[ATTR_COMMAND])
+        command = service_call.data[ATTR_COMMAND]
+        if service_call.data[ATTR_VALIDATE]:
+            command = validate_commands(command)
+        await client.async_send_command(command)
 
     async_register_admin_service(
         hass,
