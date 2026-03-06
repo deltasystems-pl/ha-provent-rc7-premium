@@ -1,0 +1,9 @@
+send_command:
+  description: "Send a raw ProVent command to /api/savedata.php. Use the same syntax as the official mobile interface (e.g. `spd:b2`)."
+  fields:
+    command:
+      description: "Command string that is forwarded to `savedata.php` for immediate execution."
+      example: "bps:ta"
+    entry_id:
+      description: "Optional config entry `entry_id` to route the request to a specific ProVent device."
+      example: "982f8d47abcd1234"
