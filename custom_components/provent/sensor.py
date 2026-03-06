@@ -11,7 +11,7 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.const import TEMP_CELSIUS
+from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
@@ -254,7 +254,7 @@ general_sensor_descriptions: tuple[ProventSensorEntityDescription, ...] = (
         key="nag_setpoint",
         name="Heating Setpoint",
         icon="mdi:radiator",
-        native_unit_of_measurement=TEMP_CELSIUS,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: _parse_device_state(data.get("nag")).get("setpoint"),
     ),
@@ -262,7 +262,7 @@ general_sensor_descriptions: tuple[ProventSensorEntityDescription, ...] = (
         key="nag_temp",
         name="Heating Temperature",
         icon="mdi:thermometer",
-        native_unit_of_measurement=TEMP_CELSIUS,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: _parse_device_state(data.get("nag")).get("temperature"),
     ),
@@ -276,7 +276,7 @@ general_sensor_descriptions: tuple[ProventSensorEntityDescription, ...] = (
         key="chl_setpoint",
         name="Cooling Setpoint",
         icon="mdi:snowflake",
-        native_unit_of_measurement=TEMP_CELSIUS,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: _parse_device_state(data.get("chl")).get("setpoint"),
     ),
@@ -284,7 +284,7 @@ general_sensor_descriptions: tuple[ProventSensorEntityDescription, ...] = (
         key="chl_temp",
         name="Cooling Temperature",
         icon="mdi:snowflake",
-        native_unit_of_measurement=TEMP_CELSIUS,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: _parse_device_state(data.get("chl")).get("temperature"),
     ),
@@ -311,7 +311,7 @@ def _build_temp_descriptions() -> tuple[ProventSensorEntityDescription, ...]:
                 key=f"tmp_{key}",
                 name=f"Temperature {label}",
                 icon="mdi:thermometer",
-                native_unit_of_measurement=TEMP_CELSIUS,
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
                 state_class=SensorStateClass.MEASUREMENT,
                 value_fn=lambda data, temp_key=key: _get_temp_value(data, temp_key),
             )
