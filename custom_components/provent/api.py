@@ -28,7 +28,7 @@ class ProventApiClient:
         return f"{self._base_url}/{endpoint}"
 
     async def async_get_all(self) -> dict[str, Any]:
-        response = await self._post("getdata.php", {"variable": ["all"]})
+        response = await self._post("getdata.php", [("variable[]", "all")])
         if not isinstance(response, dict):
             _LOGGER.warning(
                 "Unexpected getdata.php payload (%s): %s",
@@ -51,7 +51,7 @@ class ProventApiClient:
             raise ProventApiError("Empty command")
         await self._post("savedata.php", {"data": command})
 
-    async def _post(self, endpoint: str, data: dict[str, Any]) -> Any:
+    async def _post(self, endpoint: str, data: Any) -> Any:
         url = self._build_url(endpoint)
         _LOGGER.debug("Posting %s to %s", data, url)
         async with async_timeout.timeout(10):
