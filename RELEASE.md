@@ -6,11 +6,11 @@
    * `filename`: the exact ZIP asset name (`ha-provent-rc7-premium.zip`)
    * `icon`: `logo.png`
 2. **Refresh documentation or assets** (logo, README, services, etc.).
-3. **Generate the ZIP** from the repository root so the archive includes `hacs.json`, `README.md`, `FUTURE.md`, `LICENSE`, `logo.png`, and the entire `custom_components/` directory at the top level:
-   ```bash
-   cd /opt/app/rc7premium/ha-provent-rc7-premium
-   zip -r ../ha-provent-rc7-premium.zip README.md RELEASE.md FUTURE.md LICENSE hacs.json logo.png custom_components
-   ```
+3. **Generate the ZIP** from the repository root so the archive includes `manifest.json`, `hacs.json`, `README.md`, `RELEASE.md`, `FUTURE.md`, `LICENSE`, `logo.png`, and the entire `custom_components/` directory at the top level:
+    ```bash
+    cd /opt/app/rc7premium/ha-provent-rc7-premium
+   zip -r ../ha-provent-rc7-premium.zip manifest.json README.md RELEASE.md FUTURE.md LICENSE hacs.json logo.png custom_components
+    ```
 4. **Create or update a GitHub release** (e.g., `v1.0.0`, `v1.0.1`):
    * Attach the generated `ha-provent-rc7-premium.zip` as the release asset.
    * Keep the release `tag_name` consistent with version numbers in `hacs.json` and `manifest.json`.

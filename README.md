@@ -21,6 +21,7 @@ Custom Home Assistant integration that speaks the same WebManipulator API the mo
 3. Install the repository, then restart Home Assistant.
 4. After restart, add the integration via **Settings > Devices & Services > Add Integration > ProVent RC7 Premium**.
    The 1.0.1 release ZIP already contains `custom_components/provent/` along with the documentation and assets, so HACS deploys the integration directly under your HA `custom_components` directory.
+   HACS also inspects the root-level `manifest.json` (included for compatibility) before it copies `custom_components/provent/` into HA.
 
 ### Manual installation
 1. Copy the `custom_components/provent/` folder from this repository into `<config>/custom_components/provent/`.

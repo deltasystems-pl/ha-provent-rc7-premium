@@ -1,0 +1,11 @@
+{
+  "domain": "provent",
+  "name": "ProVent RC7 Premium",
+  "version": "1.0.1",
+  "documentation": "https://github.com/deltasystems-pl/ha-provent-rc7-premium",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@deltasystems-pl"],
+  "config_flow": true,
+  "iot_class": "local_polling"
+}
