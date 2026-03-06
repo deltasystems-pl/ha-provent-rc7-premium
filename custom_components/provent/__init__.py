@@ -70,12 +70,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         "client": client,
     }
 
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    await _async_forward_entry_setups(hass, entry)
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    if not await hass.config_entries.async_unload_entry_platforms(entry, PLATFORMS):
+    if not await _async_unload_entry_platforms(hass, entry):
         return False
 
     hass.data[DOMAIN].pop(entry.entry_id)
@@ -95,3 +95,22 @@ def _get_client_for_service(hass: HomeAssistant, entry_id: str | None):
     else:
         entry_data = next(iter(hass.data[DOMAIN].values()))
     return entry_data["client"]
+
+
+async def _async_forward_entry_setups(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    if hasattr(hass.config_entries, "async_forward_entry_setups"):
+        await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+        return
+
+    for platform in PLATFORMS:
+        await hass.config_entries.async_forward_entry_setup(entry, platform)
+
+
+async def _async_unload_entry_platforms(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    if hasattr(hass.config_entries, "async_unload_entry_platforms"):
+        return await hass.config_entries.async_unload_entry_platforms(entry, PLATFORMS)
+
+    result = True
+    for platform in PLATFORMS:
+        result = result and await hass.config_entries.async_unload_entry_platform(entry, platform)
+    return result
