@@ -29,3 +29,10 @@ class ProventDataUpdateCoordinator(DataUpdateCoordinator):
             return await self.client.async_get_all()
         except ProventApiError as err:
             raise UpdateFailed(err) from err
+
+    async def async_send_command(self, command: str) -> None:
+        try:
+            await self.client.async_send_command(command)
+        except ProventApiError as err:
+            raise UpdateFailed(err) from err
+        await self.async_request_refresh()
