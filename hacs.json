@@ -9,5 +9,6 @@
   "tags": ["rekuperacja", "provent", "rc7", "custom-integration"],
   "domains": ["integration"],
   "description": "Polls the ProVent WebManipulator and exposes its JSON buffer as Home Assistant sensors plus a raw command service.",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "filename": "ha-provent-rc7-premium.zip"
 }
