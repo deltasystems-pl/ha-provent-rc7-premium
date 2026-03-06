@@ -7,6 +7,7 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import ProventApiClient, ProventApiError
@@ -64,7 +65,7 @@ class ProventConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         default=(user_input.get(CONF_PORT) if user_input else DEFAULT_PORT),
                     ): vol.All(vol.Coerce(int)),
                     vol.Optional(CONF_API_PATH, default=user_input.get(CONF_API_PATH, DEFAULT_API_PATH) if user_input else DEFAULT_API_PATH): str,
-                    vol.Optional(CONF_USE_SSL, default=user_input.get(CONF_USE_SSL, False) if user_input else False): vol.Boolean(),
+                    vol.Optional(CONF_USE_SSL, default=user_input.get(CONF_USE_SSL, False) if user_input else False): cv.boolean,
                 }
             ),
             errors=errors,

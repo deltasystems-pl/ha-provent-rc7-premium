@@ -8,5 +8,5 @@
   "domains": ["integration", "climate", "sensor", "fan"],
   "description": "Polls the ProVent WebManipulator and exposes its JSON buffer as Home Assistant sensors plus a raw command service.",
   "version": "1.0.1",
-  "icon": "logo.png"
+  "icon": "logo-square.png"
 }
