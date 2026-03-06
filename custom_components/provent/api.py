@@ -30,6 +30,11 @@ class ProventApiClient:
     async def async_get_all(self) -> dict[str, Any]:
         response = await self._post("getdata.php", {"variable": ["all"]})
         if not isinstance(response, dict):
+            _LOGGER.warning(
+                "Unexpected getdata.php payload (%s): %s",
+                type(response).__name__,
+                response,
+            )
             raise ProventApiError("Unexpected payload from getdata.php")
         payload = response.get("all")
         if isinstance(payload, str):
