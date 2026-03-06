@@ -58,4 +58,7 @@ class ProventApiClient:
         except aiohttp.ContentTypeError:
             text = await response.text()
             _LOGGER.debug("Response text: %s", text)
-            raise ProventApiError("API response is not JSON")
+            try:
+                return json.loads(text)
+            except json.JSONDecodeError as err:
+                raise ProventApiError("API response is not JSON") from err
