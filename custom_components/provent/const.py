@@ -8,8 +8,9 @@ DEFAULT_API_PATH = "/api"
 DEFAULT_PORT = 80
 DEFAULT_SSL_PORT = 443
 DEFAULT_UPDATE_INTERVAL = timedelta(seconds=20)
-PLATFORMS = ["sensor"]
+PLATFORMS = ["sensor", "select", "number", "switch", "fan"]
 DATA_COORDINATOR = "coordinator"
 SERVICE_SEND_COMMAND = "send_command"
 ATTR_COMMAND = "command"
 ATTR_ENTRY_ID = "entry_id"
+ATTR_VALIDATE = "validate"

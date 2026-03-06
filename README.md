@@ -6,7 +6,7 @@ Custom Home Assistant integration that speaks the same WebManipulator API the mo
 
 ## Architecture & Communication
 1. **Polling data**: The integration uses `Ha`'s `DataUpdateCoordinator` to POST `variable[]=all` to `/api/getdata.php`. The WebManipulator returns a JSON map (e.g. `"tmp"`, `"dat"`, `"spd"`, `"nag"`, `"chl"`, etc.) that already contains decoded values from the onboard SQLite buffer, which itself is maintained by the Modbus-RTU daemon.
-2. **Command execution**: When you need to change the fan speed, bypass, season, etc., the mobile app posts `data=...` strings to `/api/savedata.php`. We expose the same mechanism via the `provent.send_command` service so HA can send `"spd:b2"`, `"bps:ta"`, `"nag:t25"`, etc.
+2. **Command execution**: When you need to change the fan speed, bypass, season, etc., the mobile app posts `data=...` strings to `/api/savedata.php`. We expose the same mechanism via the `provent.send_command` service so HA can send `"spd:b2"`, `"bps:ta"`, `"nag:T25"`, etc.
 3. **Decoding the payload**: The sensors parse the native JSON fields using the exported Modbus register mapping (`opis-rejestrow-modbus-s6.pdf`). For example, `tmp` contains five groups of four temperatures each, `dat` includes the current timestamp, `spd` packs fan speed + flags + ventilation timer, and `nag`/`chl` parse heating/cooling setpoint, measured temperature, and status letters derived from register HR 13/HR 14/IR 122.
 
 ## Requirements
@@ -64,12 +64,20 @@ After setup, the integration keeps polling the device every 20 seconds.
 
 The integration provides a sensor per description above, with an HA-friendly name and unit when applicable.
 
+## Additional control entities
+The integration also exposes writable entities (when the related feature exists on the unit):
+- **Fan**: one HA fan entity with speed percentages (mapped to ProVent gear `0..4`) and preset mode (`auto`/`manual`).
+- **Selects**: ventilation mode (`auto`/`manual`), airflow mode, season override, bypass mode, GWC mode.
+- **Numbers**: fan speed setpoint (`0..4`), heating setpoint (`4..35°C`), cooling setpoint (`4..35°C`).
+- **Switches**: ventilation boost, humidity control, CO2 control, anti-smog shield (when available in `elf` payload).
+
 ## Services
 ### `provent.send_command`
 - **Description**: Sends arbitrary `data=` commands to `/api/savedata.php`, identical to what the official app does for fan speed, bypass, season, boost, etc.
 - **Fields**:
-  - `command` (required): e.g., `"spd:b2"` to set fan speed to 2, `"bps:ta"` to toggle bypass, `"nag:t25"` for heating setpoint, `"sez:la"` for force summer, etc.
+  - `command` (required): e.g., `"spd:b2"` to set fan speed to 2, `"bps:ta"` to toggle bypass, `"nag:T25"` for heating setpoint, `"sez:la"` for force summer, etc.
   - `entry_id` (optional): Specify the specific config entry to route the command if you have multiple ProVent installations.
+  - `validate` (optional, default `true`): validates known command groups and value ranges before sending to the device.
 
 Use `provent.send_command` in automations/scripts for manual overrides or to reflect UI interactions.
 
