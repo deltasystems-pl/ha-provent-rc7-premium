@@ -38,7 +38,14 @@ class ProventConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 await self._async_test_connection(host, port, use_ssl, api_path)
             except asyncio.TimeoutError:
                 errors["base"] = "timeout"
-            except ProventApiError:
+            except ProventApiError as err:
+                _LOGGER.warning(
+                    "ProVent connection to %s:%s%s failed: %s",
+                    host,
+                    port,
+                    api_path,
+                    err,
+                )
                 errors["base"] = "cannot_connect"
             else:
                 await self.async_set_unique_id(f"{host}:{port}{api_path}")
