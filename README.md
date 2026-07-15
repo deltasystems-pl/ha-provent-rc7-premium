@@ -12,6 +12,14 @@
   <img src="https://img.shields.io/badge/license-see%20LICENSE-lightgrey.svg" alt="License" />
 </p>
 
+<p align="center">
+  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=deltasystems-pl&amp;repository=ha-provent-rc7-premium&amp;category=integration">
+    <img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Open your Home Assistant instance and open this repository inside the Home Assistant Community Store." />
+  </a>
+</p>
+
+> **Install via HACS:** click the button above (or in HACS → ⋮ → *Custom repositories*, add `https://github.com/deltasystems-pl/ha-provent-rc7-premium` as category **Integration**), download, then **restart Home Assistant** and add it via *Settings → Devices & Services → Add Integration → ProVent RC7 Premium*.
+
 Local **ProVent RC7 premium (S6) / RC7 home (S8)** recuperator integration for Home Assistant. It speaks the same WebManipulator API the mobile app uses — polling `GET /api/getdata.php` to read the SQLite-buffered Modbus values (JSON) and exposing them as HA sensors, while mirroring every mobile-app command through `POST /api/savedata.php`.
 
 ### Highlights
