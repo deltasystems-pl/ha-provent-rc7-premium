@@ -136,7 +136,9 @@ general_sensor_descriptions: tuple[ProventSensorEntityDescription, ...] = (
         name="Active Notes",
         icon="mdi:alert-circle-outline",
         entity_category=EntityCategory.DIAGNOSTIC,
-        value_fn=lambda data: ", ".join(data.get("iaw", [])),
+        # `iaw` is a list of numeric note/alarm codes (e.g. [126]); stringify each
+        # so the join can't raise on int items, and report None when there are none.
+        value_fn=lambda data: ", ".join(str(code) for code in data.get("iaw") or []) or None,
     ),
     ProventSensorEntityDescription(
         key="nag_setpoint",
