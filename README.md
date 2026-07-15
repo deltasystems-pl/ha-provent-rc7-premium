@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="ProVent RC7 Premium" height="80" />
+  <img src="https://raw.githubusercontent.com/deltasystems-pl/ha-provent-rc7-premium/main/logo.png" alt="ProVent RC7 Premium" height="80" />
 </p>
 
 <h1 align="center">ProVent RC7 Premium — Home Assistant Integration</h1>
