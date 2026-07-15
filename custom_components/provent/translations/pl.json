@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ProVent RC7 Premium",
+        "description": "Połącz się z modułem internetowym rekuperatora ProVent (WebManipulator) w sieci lokalnej.",
+        "data": {
+          "host": "Adres hosta",
+          "name": "Nazwa",
+          "port": "Port",
+          "api_path": "Ścieżka API",
+          "use_ssl": "Użyj SSL"
+        },
+        "data_description": {
+          "host": "Adres IP lub nazwa hosta modułu WebManipulator, np. 192.168.1.50",
+          "port": "Port HTTP modułu internetowego (zwykle 80)",
+          "api_path": "Ścieżka do skryptów PHP API (domyślnie /api)",
+          "use_ssl": "Włącz, jeśli moduł internetowy działa po HTTPS"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nie udało się połączyć. Sprawdź adres hosta, port i ścieżkę API oraz dostępność modułu WebManipulator.",
+      "timeout": "Urządzenie nie odpowiedziało w wyznaczonym czasie."
+    },
+    "abort": {
+      "already_configured": "To urządzenie ProVent jest już skonfigurowane."
+    }
+  },
+  "services": {
+    "send_command": {
+      "name": "Wyślij polecenie",
+      "description": "Wysyła surowe polecenie do modułu WebManipulator ProVent, tak samo jak oficjalna aplikacja (bieg wentylacji, bypass, sezon, wietrzenie, nastawy itp.).",
+      "fields": {
+        "command": {
+          "name": "Polecenie",
+          "description": "Ciąg polecenia, np. spd:b2 (bieg wentylacji 2), spd:w1 (start wietrzenia/boost), nag:T25 (nastawa grzania 25 °C), bps:ta (bypass automatyczny)."
+        },
+        "entry_id": {
+          "name": "Urządzenie docelowe",
+          "description": "Do którego urządzenia ProVent wysłać polecenie, jeśli skonfigurowano więcej niż jedno."
+        },
+        "validate": {
+          "name": "Walidacja",
+          "description": "Sprawdź polecenie pod kątem znanych grup i zakresów wartości przed wysłaniem."
+        }
+      }
+    }
+  }
+}

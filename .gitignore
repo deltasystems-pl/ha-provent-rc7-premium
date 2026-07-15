@@ -1,3 +1,9 @@
 __pycache__/
 *.py[cod]
 *.egg-info/
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+.DS_Store

@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ProVent RC7 Premium",
+        "description": "Connect to the ProVent WebManipulator (the recuperator's web module) on your local network.",
+        "data": {
+          "host": "Host",
+          "name": "Name",
+          "port": "Port",
+          "api_path": "API path",
+          "use_ssl": "Use SSL"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the WebManipulator, e.g. 192.168.1.50",
+          "port": "HTTP port of the web module (usually 80)",
+          "api_path": "Path to the PHP API scripts (default /api)",
+          "use_ssl": "Enable if the web module is served over HTTPS"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect. Check the host, port and API path, and that the WebManipulator is reachable.",
+      "timeout": "The device did not respond in time."
+    },
+    "abort": {
+      "already_configured": "This ProVent device is already configured."
+    }
+  },
+  "services": {
+    "send_command": {
+      "name": "Send command",
+      "description": "Sends a raw command to the ProVent WebManipulator, identical to the official app (fan gear, bypass, season, boost, setpoints, etc.).",
+      "fields": {
+        "command": {
+          "name": "Command",
+          "description": "Command string, e.g. spd:b2 (fan gear 2), spd:w1 (start airing/boost), nag:T25 (heating setpoint 25 °C), bps:ta (bypass auto)."
+        },
+        "entry_id": {
+          "name": "Target device",
+          "description": "Which ProVent device to send to, if more than one is configured."
+        },
+        "validate": {
+          "name": "Validate",
+          "description": "Validate the command against known command groups and value ranges before sending."
+        }
+      }
+    }
+  }
+}

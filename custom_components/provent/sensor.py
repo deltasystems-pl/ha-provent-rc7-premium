@@ -9,7 +9,7 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.const import UnitOfTemperature
+from homeassistant.const import EntityCategory, UnitOfTemperature
 
 from .const import DATA_COORDINATOR, DOMAIN
 from .coordinator import ProventDataUpdateCoordinator
@@ -55,6 +55,7 @@ general_sensor_descriptions: tuple[ProventSensorEntityDescription, ...] = (
         key="dat",
         name="Control Timestamp",
         device_class=SensorDeviceClass.TIMESTAMP,
+        entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: parse_timestamp(data.get("dat")),
     ),
     ProventSensorEntityDescription(
@@ -69,6 +70,7 @@ general_sensor_descriptions: tuple[ProventSensorEntityDescription, ...] = (
         key="spd_flags",
         name="Fan Flags",
         icon="mdi:chart-bell-curve",
+        entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: parse_spd(data.get("spd")).get("flags"),
     ),
     ProventSensorEntityDescription(
@@ -119,18 +121,21 @@ general_sensor_descriptions: tuple[ProventSensorEntityDescription, ...] = (
         key="stn",
         name="System State",
         icon="mdi:shield-check",
+        entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: data.get("stn"),
     ),
     ProventSensorEntityDescription(
         key="asc",
         name="Alarm State",
         icon="mdi:alarm-light",
+        entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: data.get("asc"),
     ),
     ProventSensorEntityDescription(
         key="iaw",
         name="Active Notes",
         icon="mdi:alert-circle-outline",
+        entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: ", ".join(data.get("iaw", [])),
     ),
     ProventSensorEntityDescription(
@@ -153,6 +158,7 @@ general_sensor_descriptions: tuple[ProventSensorEntityDescription, ...] = (
         key="nag_status",
         name="Heating Status",
         icon="mdi:thermometer-check",
+        entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: parse_device_state(data.get("nag")).get("status"),
     ),
     ProventSensorEntityDescription(
@@ -175,12 +181,14 @@ general_sensor_descriptions: tuple[ProventSensorEntityDescription, ...] = (
         key="chl_status",
         name="Cooling Status",
         icon="mdi:snowflake-alert",
+        entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: parse_device_state(data.get("chl")).get("status"),
     ),
     ProventSensorEntityDescription(
         key="elf",
         name="Electrofilter Status",
         icon="mdi:cloud-filter",
+        entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: data.get("elf"),
     ),
 )

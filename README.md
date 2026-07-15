@@ -1,8 +1,28 @@
-# ProVent RC7 Premium Home Assistant Integration
+<p align="center">
+  <img src="logo.png" alt="ProVent RC7 Premium" height="80" />
+</p>
 
-![ProVent logo](logo.png)
+<h1 align="center">ProVent RC7 Premium — Home Assistant Integration</h1>
 
-Custom Home Assistant integration that speaks the same WebManipulator API the mobile app uses. It polls `GET /api/getdata.php` to read SQLite-buffered Modbus values (JSON) and exposes them as HA sensors, while mirroring every mobile-app command through `POST /api/savedata.php`.
+<p align="center">
+  <a href="https://github.com/hacs/integration"><img src="https://img.shields.io/badge/HACS-Custom-41BDF5.svg" alt="HACS Custom" /></a>
+  <img src="https://img.shields.io/badge/version-1.0.3-informational.svg" alt="Version" />
+  <img src="https://img.shields.io/badge/Home%20Assistant-2023.12%2B-41BDF5.svg?logo=home-assistant&logoColor=white" alt="Home Assistant" />
+  <img src="https://img.shields.io/badge/IoT%20class-local%20polling-success.svg" alt="Local polling" />
+  <img src="https://img.shields.io/badge/license-see%20LICENSE-lightgrey.svg" alt="License" />
+</p>
+
+Local **ProVent RC7 premium (S6) / RC7 home (S8)** recuperator integration for Home Assistant. It speaks the same WebManipulator API the mobile app uses — polling `GET /api/getdata.php` to read the SQLite-buffered Modbus values (JSON) and exposing them as HA sensors, while mirroring every mobile-app command through `POST /api/savedata.php`.
+
+### Highlights
+- 🌀 **Fan** entity (gear 0–4, auto/manual preset) + fan-speed number.
+- 💨 **Ventilation boost** (airing), correctly reflecting the live countdown.
+- 🎛️ **Selects** — ventilation mode, airflow, season override, bypass, GWC.
+- 🌡️ **Climate** — heating/cooling setpoints and measured temperatures.
+- 🧰 **Diagnostics** — filter days, alarms, system/heating/cooling status, exchanger temperatures.
+- 🔌 100 % **local polling**, no cloud; raw `provent.send_command` service for anything not exposed.
+
+> Capabilities are auto-detected from the device: features the unit lacks (e.g. humidity/CO₂ sensors, GWC, electrofilter) are reported as unavailable rather than shown as phantom controls.
 
 ## Architecture & Communication
 1. **Polling data**: The integration uses `Ha`'s `DataUpdateCoordinator` to POST `variable[]=all` to `/api/getdata.php`. The WebManipulator returns a JSON map (e.g. `"tmp"`, `"dat"`, `"spd"`, `"nag"`, `"chl"`, etc.) that already contains decoded values from the onboard SQLite buffer, which itself is maintained by the Modbus-RTU daemon.

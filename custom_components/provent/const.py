@@ -2,6 +2,8 @@ from datetime import timedelta
 
 DOMAIN = "provent"
 DEFAULT_NAME = "ProVent RC7 Premium"
+MANUFACTURER = "Pro-Vent"
+MODEL = "RC7 Premium (S6)"
 CONF_API_PATH = "api_path"
 CONF_USE_SSL = "use_ssl"
 DEFAULT_API_PATH = "/api"
