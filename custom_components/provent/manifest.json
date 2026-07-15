@@ -1,7 +1,7 @@
 {
   "domain": "provent",
   "name": "ProVent RC7 Premium",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "documentation": "https://github.com/deltasystems-pl/ha-provent-rc7-premium",
   "issue_tracker": "https://github.com/deltasystems-pl/ha-provent-rc7-premium/issues",
   "requirements": [],

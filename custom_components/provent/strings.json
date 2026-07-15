@@ -46,5 +46,43 @@
         }
       }
     }
+  },
+  "entity": {
+    "select": {
+      "ventilation_mode": {
+        "state": {
+          "auto": "Automatic",
+          "manual": "Manual"
+        }
+      },
+      "airflow_mode": {
+        "state": {
+          "both": "Supply + extract",
+          "supply_only": "Supply only",
+          "extract_only": "Extract only"
+        }
+      },
+      "season_override": {
+        "state": {
+          "auto": "Automatic",
+          "forced_winter": "Forced winter",
+          "forced_summer": "Forced summer"
+        }
+      },
+      "bypass_mode": {
+        "state": {
+          "auto": "Automatic",
+          "forced_on": "Forced on",
+          "forced_off": "Forced off"
+        }
+      },
+      "gwc_mode": {
+        "state": {
+          "auto": "Automatic",
+          "forced_on": "Forced on",
+          "forced_off": "Forced off"
+        }
+      }
+    }
   }
 }

@@ -46,5 +46,43 @@
         }
       }
     }
+  },
+  "entity": {
+    "select": {
+      "ventilation_mode": {
+        "state": {
+          "auto": "Automatyczny",
+          "manual": "Ręczny"
+        }
+      },
+      "airflow_mode": {
+        "state": {
+          "both": "Nawiew i wywiew",
+          "supply_only": "Tylko nawiew",
+          "extract_only": "Tylko wywiew"
+        }
+      },
+      "season_override": {
+        "state": {
+          "auto": "Automatyczny",
+          "forced_winter": "Wymuszona zima",
+          "forced_summer": "Wymuszone lato"
+        }
+      },
+      "bypass_mode": {
+        "state": {
+          "auto": "Automatyczny",
+          "forced_on": "Wymuszony wł.",
+          "forced_off": "Wymuszony wył."
+        }
+      },
+      "gwc_mode": {
+        "state": {
+          "auto": "Automatyczny",
+          "forced_on": "Wymuszony wł.",
+          "forced_off": "Wymuszony wył."
+        }
+      }
+    }
   }
 }

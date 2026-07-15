@@ -49,6 +49,7 @@ class ProventSelect(ProventEntity, SelectEntity):
 SELECT_DESCRIPTIONS: tuple[ProventSelectEntityDescription, ...] = (
     ProventSelectEntityDescription(
         key="ventilation_mode",
+        translation_key="ventilation_mode",
         name="Ventilation Mode",
         icon="mdi:hvac",
         options=["auto", "manual"],
@@ -58,6 +59,7 @@ SELECT_DESCRIPTIONS: tuple[ProventSelectEntityDescription, ...] = (
     ),
     ProventSelectEntityDescription(
         key="airflow_mode",
+        translation_key="airflow_mode",
         name="Airflow Mode",
         icon="mdi:air-filter",
         options=["both", "supply_only", "extract_only"],
@@ -67,6 +69,7 @@ SELECT_DESCRIPTIONS: tuple[ProventSelectEntityDescription, ...] = (
     ),
     ProventSelectEntityDescription(
         key="season_override",
+        translation_key="season_override",
         name="Season Override",
         icon="mdi:weather-partly-snowy-rainy",
         options=["auto", "forced_winter", "forced_summer"],
@@ -76,6 +79,7 @@ SELECT_DESCRIPTIONS: tuple[ProventSelectEntityDescription, ...] = (
     ),
     ProventSelectEntityDescription(
         key="bypass_mode",
+        translation_key="bypass_mode",
         name="Bypass Mode",
         icon="mdi:swap-horizontal",
         options=["auto", "forced_on", "forced_off"],
@@ -85,6 +89,7 @@ SELECT_DESCRIPTIONS: tuple[ProventSelectEntityDescription, ...] = (
     ),
     ProventSelectEntityDescription(
         key="gwc_mode",
+        translation_key="gwc_mode",
         name="GWC Mode",
         icon="mdi:water",
         options=["auto", "forced_on", "forced_off"],
