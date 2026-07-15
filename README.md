@@ -20,110 +20,173 @@
 
 > **Install via HACS:** click the button above (or in HACS → ⋮ → *Custom repositories*, add `https://github.com/deltasystems-pl/ha-provent-rc7-premium` as category **Integration**), download, then **restart Home Assistant** and add it via *Settings → Devices & Services → Add Integration → ProVent RC7 Premium*.
 
-Local **ProVent RC7 premium (S6) / RC7 home (S8)** recuperator integration for Home Assistant. It speaks the same WebManipulator API the mobile app uses — polling `GET /api/getdata.php` to read the SQLite-buffered Modbus values (JSON) and exposing them as HA sensors, while mirroring every mobile-app command through `POST /api/savedata.php`.
+Local **Pro-Vent RC7 premium (S6) / RC7 home (S8)** recuperator integration for Home Assistant. It speaks the same WebManipulator API the mobile app uses — polling `GET /api/getdata.php` to read the SQLite-buffered Modbus values (JSON) and exposing them as Home Assistant entities, while mirroring every mobile-app command through `POST /api/savedata.php`. 100 % local, no cloud.
 
 ### Highlights
-- 🌀 **Fan** entity (gear 0–4, auto/manual preset) + fan-speed number.
-- 💨 **Ventilation boost** (airing), correctly reflecting the live countdown.
-- 🎛️ **Selects** — ventilation mode, airflow, season override, bypass, GWC.
+- 🌀 **Fan** entity (gear 0–4, auto/manual preset) + a precise fan-speed number.
+- 💨 **Ventilation boost** — the unit's *airing* (wietrzenie) function, reflecting the live countdown.
+- 🎛️ **Selects** — ventilation mode, airflow direction, season override, bypass, GWC.
 - 🌡️ **Climate** — heating/cooling setpoints and measured temperatures.
-- 🧰 **Diagnostics** — filter days, alarms, system/heating/cooling status, exchanger temperatures.
-- 🔌 100 % **local polling**, no cloud; raw `provent.send_command` service for anything not exposed.
+- 🧰 **Diagnostics** — filter days, alarms, system/heating/cooling status, 20 exchanger temperatures.
+- 🧩 **Raw `provent.send_command` service** for anything not exposed as an entity.
 
-> Capabilities are auto-detected from the device: features the unit lacks (e.g. humidity/CO₂ sensors, GWC, electrofilter) are reported as unavailable rather than shown as phantom controls.
+> **Capability auto-detection.** Entities are created only for features the unit actually has, and controls the hardware lacks (humidity/CO₂ sensors, GWC, secondary heater/cooler, CleanR electrofilter/anti-smog) report **unavailable** instead of appearing as phantom controls. So a bare unit shows fewer/greyed-out entities — that's expected, not a bug.
 
-## Architecture & Communication
-1. **Polling data**: The integration uses `Ha`'s `DataUpdateCoordinator` to POST `variable[]=all` to `/api/getdata.php`. The WebManipulator returns a JSON map (e.g. `"tmp"`, `"dat"`, `"spd"`, `"nag"`, `"chl"`, etc.) that already contains decoded values from the onboard SQLite buffer, which itself is maintained by the Modbus-RTU daemon.
-2. **Command execution**: When you need to change the fan speed, bypass, season, etc., the mobile app posts `data=...` strings to `/api/savedata.php`. We expose the same mechanism via the `provent.send_command` service so HA can send `"spd:b2"`, `"bps:ta"`, `"nag:T25"`, etc.
-3. **Decoding the payload**: The sensors parse the native JSON fields using the exported Modbus register mapping (`opis-rejestrow-modbus-s6.pdf`). For example, `tmp` contains five groups of four temperatures each, `dat` includes the current timestamp, `spd` packs fan speed + flags + ventilation timer, and `nag`/`chl` parse heating/cooling setpoint, measured temperature, and status letters derived from register HR 13/HR 14/IR 122.
+## Supported devices
+- **Pro-Vent RC7 premium (S6)** and **RC7 home (S8)** automation, and compatible **WebManipulator**-based central units (firmware variants such as S6/S8/GC2 all expose the same `getdata.php` / `savedata.php` API).
+- The device must be reachable on your LAN with `/api/getdata.php` and `/api/savedata.php` accessible **without additional authentication**.
 
 ## Requirements
-- A ProVent RC7 premium (S6) or compatible WebManipulator-based device reachable on your LAN.
-- The `/api/getdata.php`/`/api/savedata.php` endpoints accessible without additional authentication.
-- Home Assistant 2023.12 or newer (tested on 2026.2.3, which includes the typing hints and coordinator helpers used by this integration).
+- Home Assistant **2023.12** or newer (developed/tested through **2026.7**). On **2026.3+** the integration's bundled logo is shown automatically via the local brands proxy.
+- Network access from HA to the WebManipulator (default HTTP port 80).
 
 ## Installation
-### Via HACS
-1. In HACS go to **Integrations > Explore & add repositories**.
-2. Paste `https://github.com/deltasystems-pl/ha-provent-rc7-premium` and set the category to **Integration**.
-3. Install the repository, then restart Home Assistant.
-4. After restart, add the integration via **Settings > Devices & Services > Add Integration > ProVent RC7 Premium**.
-   The 1.0.1 release ZIP already contains `custom_components/provent/` along with the documentation and assets, so HACS deploys the integration directly under your HA `custom_components` directory.
-   HACS also inspects the root-level `manifest.json` (included for compatibility) before it copies `custom_components/provent/` into HA.
+
+### Via HACS (recommended)
+1. Use the **Add-to-HACS** button above, or in HACS add `https://github.com/deltasystems-pl/ha-provent-rc7-premium` as a **Custom repository** with category **Integration**.
+2. Download the integration and **restart Home Assistant**.
+3. Add it via **Settings → Devices & Services → Add Integration → ProVent RC7 Premium**.
+
+HACS installs the `custom_components/provent/` folder from the latest tagged release, so it always tracks a versioned release rather than a raw commit.
 
 ### Manual installation
-1. Copy the `custom_components/provent/` folder from this repository into `<config>/custom_components/provent/`.
-2. Verify the integration folder includes `manifest.json`, `services.yaml`, and the HA components; the HACS metadata file is optional when you install manually.
-3. Restart Home Assistant and add the integration via the UI as described above.
+1. Copy `custom_components/provent/` from this repository into `<config>/custom_components/provent/`.
+2. Restart Home Assistant and add the integration via the UI as above.
 
 ## Configuration
-When you add the integration you must provide:
-- **Host**: IP or hostname of the WebManipulator (e.g., `192.168.88.98`).
-- **Port**: Usually `80`, unless you configured the web UI on another port.
-- **API Path**: Defaults to `/api`. If you moved the PHP scripts elsewhere, adjust accordingly.
-- **Use SSL**: Enable if you configured HTTPS on the WebManipulator.
-- **Name**: Friendly label (defaults to `ProVent RC7 Premium`).
+| Field | Default | Notes |
+|-------|---------|-------|
+| **Host** | — | IP or hostname of the WebManipulator, e.g. `192.168.1.50`. |
+| **Port** | `80` | HTTP port of the web module. |
+| **API Path** | `/api` | Path to the PHP scripts. |
+| **Use SSL** | off | Enable only if the module serves HTTPS. |
+| **Name** | `ProVent RC7 Premium` | Friendly label / device name. |
 
-After setup, the integration keeps polling the device every 20 seconds.
+After setup the integration polls the device every **20 seconds**. The device card shows the manufacturer, model and a **Visit device** link to the WebManipulator web UI.
 
-## Available entities (sensors)
-| Entity Key | Description |
-|------------|-------------|
-| `dat` | Control timestamp (native HA timestamp sensor). |
-| `spd_speed` | Fan speed setting (0–4). |
-| `spd_flags` | Raw flag/letter string from `spd` (manual/program, window, etc.). |
-| `spd_remaining` | Minutes remaining on an active ventilation boost. |
-| `flt` | Days until filter replacement (or filter bitmask). |
-| `bps` | Hex-encoded bypass position/state. |
-| `gwc` | Hex-encoded GWC position/state (if configured). |
-| `sez_current` | Season currently active (`winter`, `summer`, etc.). |
-| `sez_mode` | Season mode (`auto`, `forced_winter`, `forced_summer`). |
-| `stn` | System state code (0 = normal). |
-| `asc` | Global alarm/state letter. |
-| `iaw` | Active info/alarm/ warning list (comma-separated). |
-| `nag_setpoint` | Heating setpoint (°C). |
-| `nag_temp` | Heating measured temperature (°C). |
-| `nag_status` | Heating status suffix (e.g., `wuW`). |
-| `chl_setpoint` | Cooling setpoint (°C). |
-| `chl_temp` | Cooling measured temperature (°C). |
-| `chl_status` | Cooling status suffix (e.g., `wuW`). |
-| `elf` | Electrofilter raw status string (conditional on CleanR). |
-| `tmp_t1a` … `tmp_t5d` | The 20 temperature channels described in the Modbus docs. Each sensor reports a float or `null` when the probe is absent. |
+## Entities
 
-The integration provides a sensor per description above, with an HA-friendly name and unit when applicable.
+### Controls
+| Entity | Type | Range / options | Notes |
+|--------|------|-----------------|-------|
+| Fan | `fan` | gear 0–4 (percentage), preset `auto`/`manual` | Speed maps to ProVent gear 0..4 (25 % steps). |
+| Fan Speed Setpoint | `number` | 0–4 | Authoritative discrete gear control. |
+| Ventilation Boost | `switch` | on/off | Starts/stops *airing* (register 10). On while the timer counts down. |
+| Humidity Control | `switch` | on/off | Only when a humidity sensor is fitted, otherwise unavailable. |
+| CO₂ Control | `switch` | on/off | Only when a CO₂ sensor is fitted, otherwise unavailable. |
+| Anti-Smog Shield | `switch` | on/off | Only with a CleanR electrofilter. |
+| Ventilation Mode | `select` | `auto`, `manual` | Program (daily schedule) vs manual gear. |
+| Airflow Mode | `select` | `both`, `supply_only`, `extract_only` | Depends on the unit's fan-shutdown capability. |
+| Season Override | `select` | `auto`, `forced_winter`, `forced_summer` | |
+| Bypass Mode | `select` | `auto`, `forced_on`, `forced_off` | Only with a bypass. |
+| GWC Mode | `select` | `auto`, `forced_on`, `forced_off` | Only with a ground heat exchanger. |
+| Heating Setpoint | `number` | 4–35 °C | Secondary heater/cooler device 1. |
+| Cooling Setpoint | `number` | 4–35 °C | Secondary heater/cooler device 1. |
 
-## Additional control entities
-The integration also exposes writable entities (when the related feature exists on the unit):
-- **Fan**: one HA fan entity with speed percentages (mapped to ProVent gear `0..4`) and preset mode (`auto`/`manual`).
-- **Selects**: ventilation mode (`auto`/`manual`), airflow mode, season override, bypass mode, GWC mode.
-- **Numbers**: fan speed setpoint (`0..4`), heating setpoint (`4..35°C`), cooling setpoint (`4..35°C`).
-- **Switches**: ventilation boost, humidity control, CO2 control, anti-smog shield (when available in `elf` payload).
+### Sensors
+| Entity key | Description | Category |
+|------------|-------------|----------|
+| `spd_speed` | Fan gear (0–4). | — |
+| `spd_remaining` | Minutes remaining on the active airing/boost (0 when off). | — |
+| `flt` | Days until filter replacement (or, with pressostats, a filter bitmask). | — |
+| `bps` | Bypass position/state. | — |
+| `gwc` | GWC position/state (if configured). | — |
+| `sez_current` | Active season (`winter`/`summer`). | — |
+| `nag_setpoint` / `nag_temp` | Heating setpoint / measured temperature (°C). | — |
+| `chl_setpoint` / `chl_temp` | Cooling setpoint / measured temperature (°C). | — |
+| `tmp_t1a` … `tmp_t5d` | 20 exchanger temperature channels (Modbus IR 124–143); `null` when the probe is absent. | — |
+| `dat` | Control timestamp. | Diagnostic |
+| `spd_flags` | Raw flag string (mode/airflow/humidity/CO₂ letters). | Diagnostic |
+| `sez_mode` | Season mode (`auto`/`forced_winter`/`forced_summer`). | — |
+| `stn` | System state code (`0` = normal). | Diagnostic |
+| `asc` | Global alarm/state letter (`N` = none). | Diagnostic |
+| `iaw` | Active info/alarm/warning codes. | Diagnostic |
+| `nag_status` / `chl_status` | Heating / cooling status suffix. | Diagnostic |
+| `elf` | Electrofilter raw status string (CleanR only). | Diagnostic |
 
-## Fancy "Quick Control" widget
-A ready Lovelace widget is included at:
-- `examples/lovelace_provent_widget.yaml`
+Diagnostic entities are grouped under the device page's **Diagnostic** section to keep the primary controls uncluttered.
 
-It gives one compact control block with:
-- fan on/off + speed + preset mode
-- boost/humidity/CO2/anti-smog toggles
-- airflow/season/bypass/GWC selectors
-- heating/cooling setpoint controls
-- key live status rows
+## `provent.send_command` service
+Every control above is exposed as an entity, but `provent.send_command` lets you send **any** raw command the mobile app can — useful for automations, unmapped features, or scripting.
 
-Import it as a **Manual card** and replace the example entity IDs with your own.
+| Field | Required | Description |
+|-------|----------|-------------|
+| `command` | yes | Command string, e.g. `spd:b2`. |
+| `entry_id` | no | Target a specific ProVent device if more than one is configured. |
+| `validate` | no (default `true`) | Validate the group/value range before sending. |
 
-## Services
-### `provent.send_command`
-- **Description**: Sends arbitrary `data=` commands to `/api/savedata.php`, identical to what the official app does for fan speed, bypass, season, boost, etc.
-- **Fields**:
-  - `command` (required): e.g., `"spd:b2"` to set fan speed to 2, `"bps:ta"` to toggle bypass, `"nag:T25"` for heating setpoint, `"sez:la"` for force summer, etc.
-  - `entry_id` (optional): Specify the specific config entry to route the command if you have multiple ProVent installations.
-  - `validate` (optional, default `true`): validates known command groups and value ranges before sending to the device.
+### Command reference
+Format is `group:payload`. Common commands:
 
-Use `provent.send_command` in automations/scripts for manual overrides or to reflect UI interactions.
+| Command | Effect |
+|---------|--------|
+| `spd:b0` … `spd:b4` | Set fan gear 0–4. |
+| `spd:ta` / `spd:tm` | Ventilation mode auto (program) / manual. |
+| `spd:po` / `spd:pn` / `spd:pw` | Airflow both / supply-only / extract-only. |
+| `spd:w1` / `spd:w0` | Airing (boost) on / off. |
+| `spd:h1` / `spd:h0` | Humidity control on / off *(if fitted)*. |
+| `spd:c1` / `spd:c0` | CO₂ control on / off *(if fitted)*. |
+| `bps:ta` / `bps:tz` / `bps:tw` | Bypass auto / forced-on / forced-off. |
+| `gwc:ta` / `gwc:tz` / `gwc:tw` | GWC auto / forced-on / forced-off. |
+| `sez:sa` / `sez:sz` / `sez:sl` | Season auto / winter / summer. |
+| `nag:T4` … `nag:T35` | Heating setpoint °C (prefix `2` targets device 2, e.g. `nag:2T22`). |
+| `chl:T4` … `chl:T35` | Cooling setpoint °C. |
+| `asc:r` | Clear an active emergency stop. |
+| `elf:t1` / `elf:t0`, `elf:f0..f3` | Anti-smog on/off, electrofilter mode *(CleanR only)*. |
 
-## Developing & Troubleshooting
-- Run `python -m compileall ha-provent` to verify imports/typing.
-- Check HA logs for `provent` domain entries; network errors typically mean the device is unreachable or the API path is wrong.
-- If you want to reverse engineer more commands, watch the WebManipulator GUI’s network tab for `getdata.php`/`savedata.php` calls.
-- Use the Modbus register map (`opis-rejestrow-modbus-s6.pdf`) to decode additional fields or extend the integration with switches/number entities (fan boost, heating modes, custom commands).
+The complete reverse-engineered command map (including zones, date/time and electrofilter sub-commands) is in [`FUTURE.md`](FUTURE.md), and the raw register semantics in [`opis-rejestrow-modbus-s6.pdf`](opis-rejestrow-modbus-s6.pdf).
+
+## Example: stop ventilation while a window is open
+Pause the recuperator when a contact opens and restore the previous gear/boost when everything closes:
+
+```yaml
+# Stop when a window opens
+automation:
+  - alias: ProVent – window open, stop
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.window_contact
+        to: "on"
+    conditions:
+      - "{{ is_state('fan.provent_rc7_premium_fan','on') or is_state('switch.provent_rc7_premium_ventilation_boost','on') }}"
+    actions:
+      - action: scene.create
+        data: { scene_id: provent_backup, snapshot_entities: [number.provent_rc7_premium_fan_speed_setpoint, switch.provent_rc7_premium_ventilation_boost] }
+      - action: number.set_value
+        target: { entity_id: number.provent_rc7_premium_fan_speed_setpoint }
+        data: { value: 0 }
+
+  - alias: ProVent – window closed, restore
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.window_contact
+        to: "off"
+    actions:
+      - action: scene.turn_on
+        target: { entity_id: scene.provent_backup }
+```
+
+> Tip: the **fan-speed setpoint number** (not the fan percentage) is the most reliable way to stop/start the unit — writing `0` stops it, writing the previous gear restores it.
+
+## Lovelace quick-control widget
+A ready-made compact control card is included at [`examples/lovelace_provent_widget.yaml`](examples/lovelace_provent_widget.yaml) — fan on/off + speed + preset, boost/humidity/CO₂/anti-smog toggles, airflow/season/bypass/GWC selectors, heating/cooling setpoints and key live-status rows. Import it as a **Manual card** and replace the example entity IDs with your own.
+
+## How it works
+1. **Read** — a `DataUpdateCoordinator` POSTs `variable[]=all` to `/api/getdata.php`. The WebManipulator returns a JSON map (`tmp`, `dat`, `spd`, `nag`, `chl`, `bps`, `gwc`, `sez`, `elf`, `flt`, `stn`, `asc`, `iaw`, …) decoded from the onboard SQLite buffer that the Modbus-RTU daemon maintains.
+2. **Write** — commands are POSTed as `data=<group:payload>` to `/api/savedata.php`, which the daemon applies over Modbus RTU.
+3. **Decode** — packed fields are parsed per the Modbus map. The `spd` field, for example, packs `gear + mode + airflow + humidity + CO₂ + airing-duration [+ airing-remaining]`; the trailing digits are the configured airing *duration* and a live countdown is appended only while airing is active. `nag`/`chl` carry setpoint + measured temperature + status letters. See [`FUTURE.md`](FUTURE.md) for the exact string grammars.
+
+## Troubleshooting
+- **Some entities are `unavailable`.** Expected when the hardware lacks that feature (no humidity/CO₂ sensor, no GWC/bypass, no secondary heater/cooler, no CleanR). Capability is auto-detected from the device payload.
+- **Cannot connect / everything unavailable.** Check the host, port and API path, and that `getdata.php`/`savedata.php` are reachable without a login. Watch the HA log for the `provent` domain.
+- **A command has no effect.** Confirm the feature exists on your unit and the value is in range; try it manually with `provent.send_command` and `validate: true`.
+- **Reverse-engineering more commands.** Watch the WebManipulator web UI's network tab for `getdata.php`/`savedata.php` calls, or read `FUTURE.md` / the Modbus PDF.
+
+## Contributing / development
+- Validate syntax with `python -m compileall custom_components/provent`.
+- The integration is pure `local_polling` with no external requirements.
+- Icons/logo live in `custom_components/provent/brand/` (shown by HA 2026.3+) and are staged for `home-assistant/brands` under `brands/`.
+- Releases and changelog: <https://github.com/deltasystems-pl/ha-provent-rc7-premium/releases>.
+
+## License
+See [LICENSE](LICENSE).
