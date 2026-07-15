@@ -185,7 +185,7 @@ A ready-made compact control card is included at [`examples/lovelace_provent_wid
 ## Contributing / development
 - Validate syntax with `python -m compileall custom_components/provent`.
 - The integration is pure `local_polling` with no external requirements.
-- Icons/logo live in `custom_components/provent/brand/` (shown by HA 2026.3+) and are staged for `home-assistant/brands` under `brands/`.
+- Icons/logo live in `custom_components/provent/brand/` and are served by Home Assistant 2026.3+ via its local brands proxy (custom integrations ship their own brand images now — they are no longer submitted to `home-assistant/brands`).
 - Releases and changelog: <https://github.com/deltasystems-pl/ha-provent-rc7-premium/releases>.
 
 ## License
