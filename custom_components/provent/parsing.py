@@ -44,21 +44,58 @@ def parse_timestamp(value: str | None) -> datetime | None:
 
 
 def parse_spd(value: str | None) -> dict[str, Any]:
+    """Decode the packed ``spd`` string emitted by the WebManipulator daemon.
+
+    Grammar (RC7 premium / RC7 home firmware, per the device's ``cm``/``cmgc``
+    frame composer)::
+
+        gear(1 digit, 0-4)
+          + 'c'                             -> CO-alarm state, nothing follows
+          | mode(1: 'a'=auto / 'm'=manual)
+            airflow(1: 'o' / 'w')
+            humidity(1: '1'/'0', or '-' when no humidity sensor is fitted)
+            co2(1: '1'/'0', or '-' when no CO2 sensor is fitted)
+            airing_duration(2 digits, always present)
+            [airing_remaining(2 digits) only while airing/wietrzenie is active]
+
+    The trailing two digits when airing is *inactive* are the configured airing
+    duration, not a live countdown (Modbus register 10 reads 0 when inactive);
+    a remaining value is appended only while airing runs. Reading the last two
+    digits as the remaining time made the ventilation-boost switch (which is on
+    when ``ventilation_remaining > 0``) read permanently on and uncontrollable.
+    Humidity/CO2 are single positional flags, not the letters ``h``/``c``.
+    """
     if not value:
         return {}
 
     result: dict[str, Any] = {}
     if value[0].isdigit():
         result["speed"] = int(value[0])
-    if len(value) >= 3:
-        tail = value[-2:]
-        if tail.isdigit():
-            result["ventilation_remaining"] = int(tail)
-            result["flags"] = value[1:-2]
-        else:
-            result["flags"] = value[1:]
-    else:
-        result["flags"] = value[1:]
+
+    rest = value[1:]
+
+    # CO-alarm special state: gear followed by a lone 'c', no other fields.
+    if rest[:1] == "c":
+        result["flags"] = "c"
+        result["co_alarm"] = True
+        result["humidity"] = None
+        result["co2"] = None
+        result["ventilation_remaining"] = 0
+        return result
+
+    # Fixed-width flag block: mode, airflow, humidity, co2.
+    result["flags"] = rest[:4]
+    result["co_alarm"] = False
+
+    humidity = rest[2:3]
+    result["humidity"] = True if humidity == "1" else False if humidity == "0" else None
+    co2 = rest[3:4]
+    result["co2"] = True if co2 == "1" else False if co2 == "0" else None
+
+    digits = rest[4:]
+    result["ventilation_duration"] = coerce_int(digits[:2]) if len(digits) >= 2 else None
+    # A live countdown is present only while airing is active (extra 2 digits).
+    result["ventilation_remaining"] = (coerce_int(digits[2:]) or 0) if len(digits) > 2 else 0
     return result
 
 

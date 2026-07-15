@@ -64,8 +64,8 @@ SWITCH_DESCRIPTIONS: tuple[ProventSwitchEntityDescription, ...] = (
         icon="mdi:water-percent",
         command_on="spd:h1",
         command_off="spd:h0",
-        value_fn=lambda data: "h" in (parse_spd(data.get("spd")).get("flags") or "").lower(),
-        exists_fn=lambda data: data.get("spd") is not None,
+        value_fn=lambda data: parse_spd(data.get("spd")).get("humidity") is True,
+        exists_fn=lambda data: parse_spd(data.get("spd")).get("humidity") is not None,
     ),
     ProventSwitchEntityDescription(
         key="co2_control",
@@ -73,8 +73,8 @@ SWITCH_DESCRIPTIONS: tuple[ProventSwitchEntityDescription, ...] = (
         icon="mdi:molecule-co2",
         command_on="spd:c1",
         command_off="spd:c0",
-        value_fn=lambda data: "c" in (parse_spd(data.get("spd")).get("flags") or "").lower(),
-        exists_fn=lambda data: data.get("spd") is not None,
+        value_fn=lambda data: parse_spd(data.get("spd")).get("co2") is True,
+        exists_fn=lambda data: parse_spd(data.get("spd")).get("co2") is not None,
     ),
     ProventSwitchEntityDescription(
         key="anti_smog_shield",

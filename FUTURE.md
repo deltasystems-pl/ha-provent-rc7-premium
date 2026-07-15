@@ -61,6 +61,34 @@ From `/var/www/js/ViewModels/*.js` + `/usr/local/bin/wm-pth-new/cmgc.py` + `cm_s
 - `spd:h[0|1]` -> humidity control (`CM_SET_SPD_HMD = 27`)
 - `spd:c[0|1]` -> CO2 control (`CM_SET_SPD_CO2 = 28`)
 
+### `spd` read-back grammar (confirmed on device, GC2 firmware `cmgc.py`)
+
+The daemon composes `spd` in `cmgc.py` (`gc_new_values`). Exact layout:
+
+```
+spd = gear(1 digit 0-4)
+    + either 'c'                       -> CO-alarm state, nothing else follows
+      or:
+        mode      (1)  'a' auto / 'm' manual
+        airflow   (1)  'o' / 'w'
+        humidity  (1)  '1'/'0'  ('-' when no humidity sensor is fitted)
+        co2       (1)  '1'/'0'  ('-' when no CO2 sensor is fitted)
+        duration  (2 digits)  configured airing time (frame[26]&0x7F) -- ALWAYS present
+        remaining (2 digits)  live airing countdown -- ONLY appended while airing runs
+```
+
+Examples: `4mo--15` = gear 4, manual, both fans, no hum/co2 sensor, airing duration 15, **airing off**;
+`4mo--1513` = same but **airing on**, 13 min left (Modbus reg 10 read); `4c` = CO alarm.
+
+Key gotchas (were bugs in the integration, fixed in 1.0.2):
+- The trailing 2 digits when airing is OFF are the **duration setting**, NOT remaining
+  (reg 10 reads 0 when inactive). Only treat digits beyond the duration as remaining, else
+  the boost switch reads permanently on.
+- Humidity/CO2 are positional flags (`1`/`0`/`-`), never letters `h`/`c`; a `-` means the
+  sensor is not fitted, so the corresponding switch should be unavailable, not "off".
+- `cfg['spd']` (e.g. `24N--`) advertises capability: `2`,maxgear`4`,airflow-off`N/W/O/-`,
+  humidity`H/-`,co2`C/-`.
+
 ### Bypass / season / GWC
 - `bps:t[a|z|w]` -> bypass mode (`CM_SET_BPS_MODE = 10`, values 2/1/0)
 - `sez:s[a|z|l]` -> season mode (`CM_SET_SEASON_MODE = 9`, values 2/1/0)
